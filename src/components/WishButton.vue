@@ -1,20 +1,24 @@
-<template>
+<!-- <template>
   <v-container fluid>
     <v-btn color="blue" v-on:click="addWishList()">読みたいリストに追加</v-btn>
     <v-dialog v-model="wishDialog" max-width="300">
       <v-card>
-        <v-card-text v-if="toPropsWishFlag">「{{ toPropsTitle }}」が読みたい本のリストに追加されました</v-card-text>
-        <v-card-text v-else>「{{ toPropsTitle }}」は既に読みたい本のリストに追加されています</v-card-text>
+        <v-card-text v-if="toPropsWishFlag"
+          >「{{ toPropsTitle }}」が読みたい本のリストに追加されました</v-card-text
+        >
+        <v-card-text v-else
+          >「{{ toPropsTitle }}」は既に読みたい本のリストに追加されています</v-card-text
+        >
       </v-card>
     </v-dialog>
   </v-container>
 </template>
 
 <script>
-import firebase from 'firebase';
+import firebase from 'firebase'
 
 export default {
-  name: "WishButton",
+  name: 'WishButton',
 
   components: {},
 
@@ -22,21 +26,21 @@ export default {
 
   data() {
     return {
-      wishDialog: false,
+      wishDialog: false
     }
   },
 
   methods: {
     async addWishList() {
       firebase.auth().onAuthStateChanged((user) => {
-        if(user) {
-          this.$emit('wish-button');
-          return this.wishDialog = true;
+        if (user) {
+          this.$emit('wish-button')
+          return (this.wishDialog = true)
         } else {
-          alert("サインインしてください");
+          alert('サインインしてください')
         }
-      });
-    },
-  },
+      })
+    }
+  }
 }
-</script>
+</script> -->

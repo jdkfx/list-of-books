@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
   <v-container fluid>
     <v-btn color="red" v-on:click="deleteFromList()">リストから削除</v-btn>
     <v-dialog v-model="doneDialog" max-width="300">
@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import firebase from 'firebase';
+import firebase from 'firebase'
 
 export default {
-  name: "DeleteButton",
+  name: 'DeleteButton',
 
   components: {},
 
@@ -21,21 +21,21 @@ export default {
 
   data() {
     return {
-      doneDialog: false,
+      doneDialog: false
     }
   },
 
   methods: {
-    async deleteFromList(){
+    async deleteFromList() {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-          this.$emit('delete-button');
-          return this.doneDialog = true;
+          this.$emit('delete-button')
+          return (this.doneDialog = true)
         } else {
-          alert("サインインしてください");
+          alert('サインインしてください')
         }
-      });
+      })
     }
-  },
+  }
 }
-</script>
+</script> -->

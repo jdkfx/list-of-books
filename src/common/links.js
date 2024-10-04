@@ -2,31 +2,31 @@ export default {
   linkItems: [
     {
       name: 'ホーム',
-      url: '/',
+      url: '/'
     },
     {
       name: '読みたいリスト',
-      url: '/wish',
+      url: '/wish'
     },
     {
       name: '読了リスト',
-      url: '/done',
+      url: '/done'
     },
     {
       name: '検索',
-      url: '/search',
+      url: '/search'
     },
     {
       name: 'このサイトについて',
-      url: '/about',
+      url: '/about'
     },
     {
       name: 'サインイン',
-      url: '/signin',
+      url: '/signin'
     },
     {
       name: 'サインアウト',
-      url: '/signout',
-    },
+      url: '/signout'
+    }
   ]
 }

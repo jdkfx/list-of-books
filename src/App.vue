@@ -1,45 +1,85 @@
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router'
+import HelloWorld from './components/HelloWorld.vue'
+</script>
+
 <template>
-  <v-app>
-    <header>
-      <v-app-bar app color="#FF9800" dark>
-        <v-app-bar-nav-icon v-on:click="drawer = true"></v-app-bar-nav-icon>
-        <v-toolbar-title class="d-flex align-center">
-          <h2>書籍リスト</h2>
-        </v-toolbar-title>
-      </v-app-bar>
+  <header>
+    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-      <v-navigation-drawer v-model="drawer" fixed temporary>
-        <v-list nav dense>
-          <v-list-item-group>
-            <v-list-item v-for="(linkItem, index) in linkItems" :key="index" :href="linkItem.url">
-              <v-list-item-title>{{ linkItem.name }}</v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </v-navigation-drawer>
-    </header>
+    <div class="wrapper">
+      <HelloWorld msg="You did it!" />
 
-    <body>
-      <v-main>
-        <v-content>
-          <router-view />
-        </v-content>
-      </v-main>
-    </body>
-  </v-app>
+      <nav>
+        <RouterLink to="/">Home</RouterLink>
+        <RouterLink to="/about">About</RouterLink>
+      </nav>
+    </div>
+  </header>
+
+  <RouterView />
 </template>
 
-<script>
-import links from './common/links';
+<style scoped>
+header {
+  line-height: 1.5;
+  max-height: 100vh;
+}
 
-export default {
-  name: 'App',
+.logo {
+  display: block;
+  margin: 0 auto 2rem;
+}
 
-  components: {},
+nav {
+  width: 100%;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 2rem;
+}
 
-  data: () => ({
-    drawer: false,
-    linkItems: links.linkItems,
-  }),
-};
-</script>
+nav a.router-link-exact-active {
+  color: var(--color-text);
+}
+
+nav a.router-link-exact-active:hover {
+  background-color: transparent;
+}
+
+nav a {
+  display: inline-block;
+  padding: 0 1rem;
+  border-left: 1px solid var(--color-border);
+}
+
+nav a:first-of-type {
+  border: 0;
+}
+
+@media (min-width: 1024px) {
+  header {
+    display: flex;
+    place-items: center;
+    padding-right: calc(var(--section-gap) / 2);
+  }
+
+  .logo {
+    margin: 0 2rem 0 0;
+  }
+
+  header .wrapper {
+    display: flex;
+    place-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  nav {
+    text-align: left;
+    margin-left: -1rem;
+    font-size: 1rem;
+
+    padding: 1rem 0;
+    margin-top: 1rem;
+  }
+}
+</style>
