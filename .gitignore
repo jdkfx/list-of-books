@@ -1,6 +1,8 @@
 # Env files
-.env.dev
-.env.prod
+.env
+.env.local
+.env.*
+.env.*.local
 
 # Logs
 logs

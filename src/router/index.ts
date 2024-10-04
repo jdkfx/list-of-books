@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
-// import SearchView from '@/views/Search.vue'
+import Home from '@/views/Home.vue'
+import Search from '@/views/Search.vue'
 // import WishView from '@/views/Wish.vue'
 // import DoneView from '@/views/Done.vue'
 
@@ -10,13 +10,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView
+      component: Home
+    },
+    {
+      path: '/search',
+      name: 'search',
+      component: Search
     }
-    // {
-    //   path: '/search',
-    //   name: 'search',
-    //   component: SearchView
-    // },
     // {
     //   path: '/wish',
     //   name: 'wish',

@@ -1,241 +1,175 @@
-<!-- <template>
-  <v-container>
-    <v-row justify="center" class="text-center">
-      <v-col>
-        <div>
-          <h1>検索ページ</h1>
-        </div>
+<script setup lang="ts">
+import { ref } from 'vue'
+import firebase from 'firebase/app'
+import { db } from '../plugins/firebase.js'
+import WishButton from '@/components/WishButton.vue'
+import DoneButton from '@/components/DoneButton.vue'
 
-        <div>
-          <v-text-field
-            v-on:change="searchByKeyword(keyword)"
-            v-model="keyword"
-            placeholder="書籍を検索"
-          />
-        </div>
+const keyword = ref('')
+const searchResults = ref(null)
+const isLoading = ref(false)
+const errorMessage = ref('')
+const baseURL = `https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?format=json&applicationId=${import.meta.env.VITE_RAKUTEN_API_APP_ID}`
 
-        <div>
-          <v-text-field
-            v-on:change="searchByAuthor(author)"
-            v-model="author"
-            placeholder="著者を検索"
-          />
-        </div>
+const queryBuilder = (query: { keyword: string }) => {
+  return Object.entries(query || {})
+    .filter(([key, value]) => value !== null && value !== undefined)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&')
+}
 
-        <div class="mb-5">
-          <v-btn color="green" v-on:click="search(keyword, author)">検索</v-btn>
-        </div>
+const callSearchAPI = async (query: { keyword: string }) => {
+  const getURL = `${baseURL}&${queryBuilder(query)}`
+  console.log(getURL)
+  try {
+    const response = await fetch(getURL)
+    if (!response.ok) {
+      throw new Error(`API call failed with status: ${response.status}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('API call failed:', error)
+    throw error
+  }
+}
 
-        <div v-if="items !== null">
-          <ul v-for="item in items" v-bind:key="item.id">
-            <li style="list-style: none">
-              <img v-bind:src="item.Item.largeImageUrl" />
-              <p>タイトル：{{ item.Item.title }}</p>
-              <p>著者：{{ item.Item.author }}</p>
-              <p>{{ item.Item.itemCaption }}</p>
-              <p>ISBN：{{ item.Item.isbn }}</p>
-              <p>出版社：{{ item.Item.publisherName }}</p>
+const searchByKeyword = async (keyword: string) => {
+  isLoading.value = true
+  errorMessage.value = ''
+  try {
+    const data = await callSearchAPI({ keyword })
+    searchResults.value = data
+  } catch (error) {
+    errorMessage.value = 'API call failed'
+  } finally {
+    isLoading.value = false
+  }
+}
 
-              <wish-button
-                v-on:wish-button="clickWishButton(item.Item)"
-                v-bind:toPropsTitle="item.Item.title"
-                v-bind:toPropsWishFlag="propsWishFlag"
-              ></wish-button>
+// // 読みたい本のリストに追加
+// async clickWishButton(item) {
+//   firebase.auth().onAuthStateChanged((user) => {
+//     if (user) {
+//       let self = this
+//       let wishColRef = db.collection('users').doc(user.uid).collection('wishLists')
+//       if (user) {
+//         console.log(user.uid)
+//         this.propsTitle = item.title
 
-              <done-button
-                v-on:done-button="clickDoneButton(item.Item)"
-                v-bind:toPropsTitle="item.Item.title"
-                v-bind:toPropsDoneFlag="propsDoneFlag"
-              ></done-button>
-            </li>
-          </ul>
-        </div>
-      </v-col>
-    </v-row>
+//         wishColRef
+//           .where('isbn', '==', item.isbn)
+//           .get()
+//           .then(function (querySnapshot) {
+//             if (querySnapshot.empty) {
+//               self.propsWishFlag = true
+//               wishColRef
+//                 .add({
+//                   imageUrl: item.largeImageUrl,
+//                   title: item.title,
+//                   author: item.author,
+//                   isbn: item.isbn,
+//                   addedAt: moment(new Date()).format('YYYY/MM/DD'),
+//                   timestamp: firebase.firestore.FieldValue.serverTimestamp()
+//                 })
+//                 .then(function (docRef) {
+//                   console.log('Document ID:', docRef.id, 'successfully written!')
+//                   wishColRef.doc(docRef.id).update({
+//                     docId: docRef.id
+//                   })
+//                 })
+//                 .catch(function (error) {
+//                   console.log('Error writing document: ', error)
+//                 })
+//             } else {
+//               self.propsWishFlag = false
+//               console.log("Document can't written!")
+//             }
+//           })
+//           .catch(function (error) {
+//             console.log('Error getting documents: ', error)
+//           })
+//       }
+//     }
+//   })
+// },
+
+// 読了した本のリストに追加
+//   async clickDoneButton(item) {
+//     firebase.auth().onAuthStateChanged((user) => {
+//       if (user) {
+//         let self = this
+//         let doneColRef = db.collection('users').doc(user.uid).collection('doneLists')
+//         let wishColRef = db.collection('users').doc(user.uid).collection('wishLists')
+//         if (user) {
+//           console.log(user.uid)
+//           this.propsTitle = item.title
+
+//           doneColRef
+//             .where('isbn', '==', item.isbn)
+//             .get()
+//             .then(function (querySnapshot) {
+//               if (querySnapshot.empty) {
+//                 self.propsDoneFlag = true
+//                 doneColRef
+//                   .add({
+//                     imageUrl: item.largeImageUrl,
+//                     title: item.title,
+//                     author: item.author,
+//                     isbn: item.isbn,
+//                     addedAt: moment(new Date()).format('YYYY/MM/DD'),
+//                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
+//                   })
+//                   .then(function (docRef) {
+//                     console.log('Document ID:', docRef.id, 'successfully written!')
+//                     doneColRef.doc(docRef.id).update({
+//                       docId: docRef.id
+//                     })
+
+//                     wishColRef
+//                       .where('isbn', '==', item.isbn)
+//                       .get()
+//                       .then((snapshot) => {
+//                         snapshot.forEach((doc) => {
+//                           wishColRef.doc(doc.id).update({
+//                             doneFlag: true
+//                           })
+//                           console.log('The wishlist(ID:', doc.id, ') update is completed')
+//                         })
+//                       })
+//                   })
+//                   .catch(function (error) {
+//                     console.log('Error writing document: ', error)
+//                   })
+//               } else {
+//                 self.propsDoneFlag = false
+//                 console.log("Document can't written!")
+//               }
+//             })
+//             .catch(function (error) {
+//               console.log('Error getting documents: ', error)
+//             })
+//         }
+//       }
+//     })
+//   }
+// }
+</script>
+
+<template>
+  <v-container class="mt-5">
+    <v-text-field v-model="keyword" label="キーワード検索" />
+    <v-btn
+      @click="searchByKeyword(keyword)"
+      color="teal"
+      size="large"
+      prepend-icon="mdi-magnify"
+      block
+      >検索</v-btn
+    >
+
+    <v-alert v-if="errorMessage" type="error" class="my-5" dismissible>
+      {{ errorMessage }}
+    </v-alert>
   </v-container>
 </template>
-
-<script>
-import firebase from 'firebase'
-import WishButton from '../components/WishButton'
-import DoneButton from '../components/DoneButton'
-import { db } from '../plugins/firebase'
-import moment from 'moment'
-
-const baseURL = `https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?format=json&applicationId=${process.env.VUE_APP_RAKUTEN_API_APP_ID}`
-
-// 検索クエリの作成
-const queryBuilder = (query) =>
-  Object.entries(query || {})
-    .map(([key, value]) => `${key}=${value}`)
-    .join('&')
-
-export default {
-  name: 'Search',
-
-  components: {
-    'wish-button': WishButton,
-    'done-button': DoneButton
-  },
-
-  data() {
-    return {
-      keyword: '',
-      author: '',
-      items: '',
-      propsTitle: '',
-      propsWishFlag: '',
-      propsDoneFlag: ''
-    }
-  },
-
-  methods: {
-    // 検索APIへのアクセス
-    callSearchAPI(query) {
-      const getURL = `${baseURL}&${queryBuilder(query)}`
-      return this.$axios.get(getURL)
-    },
-
-    // キーワードを検索
-    async searchByKeyword() {
-      const { data } = await this.callSearchAPI({ title: this.keyword })
-      this.items = data.Items
-    },
-
-    // 著者で検索
-    async searchByAuthor() {
-      const { data } = await this.callSearchAPI({ author: this.author })
-      this.items = data.Items
-    },
-
-    // キーワード、著者で検索
-    async search() {
-      const { data } = await this.callSearchAPI({
-        title: this.keyword,
-        author: this.author
-      })
-      this.items = data.Items
-    },
-
-    // 読みたい本のリストに追加
-    async clickWishButton(item) {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          let self = this
-          let wishColRef = db.collection('users').doc(user.uid).collection('wishLists')
-          if (user) {
-            console.log(user.uid)
-            this.propsTitle = item.title
-
-            wishColRef
-              .where('isbn', '==', item.isbn)
-              .get()
-              .then(function (querySnapshot) {
-                if (querySnapshot.empty) {
-                  self.propsWishFlag = true
-                  wishColRef
-                    .add({
-                      imageUrl: item.largeImageUrl,
-                      title: item.title,
-                      author: item.author,
-                      isbn: item.isbn,
-                      addedAt: moment(new Date()).format('YYYY/MM/DD'),
-                      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                    .then(function (docRef) {
-                      console.log('Document ID:', docRef.id, 'successfully written!')
-                      wishColRef.doc(docRef.id).update({
-                        docId: docRef.id
-                      })
-                    })
-                    .catch(function (error) {
-                      console.log('Error writing document: ', error)
-                    })
-                } else {
-                  self.propsWishFlag = false
-                  console.log("Document can't written!")
-                }
-              })
-              .catch(function (error) {
-                console.log('Error getting documents: ', error)
-              })
-          }
-        }
-      })
-    },
-
-    // 読了した本のリストに追加
-    async clickDoneButton(item) {
-      firebase.auth().onAuthStateChanged((user) => {
-        if (user) {
-          let self = this
-          let doneColRef = db.collection('users').doc(user.uid).collection('doneLists')
-          let wishColRef = db.collection('users').doc(user.uid).collection('wishLists')
-          if (user) {
-            console.log(user.uid)
-            this.propsTitle = item.title
-
-            doneColRef
-              .where('isbn', '==', item.isbn)
-              .get()
-              .then(function (querySnapshot) {
-                if (querySnapshot.empty) {
-                  self.propsDoneFlag = true
-                  doneColRef
-                    .add({
-                      imageUrl: item.largeImageUrl,
-                      title: item.title,
-                      author: item.author,
-                      isbn: item.isbn,
-                      addedAt: moment(new Date()).format('YYYY/MM/DD'),
-                      timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    })
-                    .then(function (docRef) {
-                      console.log('Document ID:', docRef.id, 'successfully written!')
-                      doneColRef.doc(docRef.id).update({
-                        docId: docRef.id
-                      })
-
-                      wishColRef
-                        .where('isbn', '==', item.isbn)
-                        .get()
-                        .then((snapshot) => {
-                          snapshot.forEach((doc) => {
-                            wishColRef.doc(doc.id).update({
-                              doneFlag: true
-                            })
-                            console.log('The wishlist(ID:', doc.id, ') update is completed')
-                          })
-                        })
-                    })
-                    .catch(function (error) {
-                      console.log('Error writing document: ', error)
-                    })
-                } else {
-                  self.propsDoneFlag = false
-                  console.log("Document can't written!")
-                }
-              })
-              .catch(function (error) {
-                console.log('Error getting documents: ', error)
-              })
-          }
-        }
-      })
-    }
-  },
-
-  watch: {
-    handler: function () {
-      this.searchByKeyword(true)
-      this.searchByAuthor(true)
-    },
-    deep: true
-  }
-
-  // mounted: function() {
-  //   const { data } = this.callSearchAPI();
-  //   this.items = data.Items;
-  // },
-}
-</script> -->
