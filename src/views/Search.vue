@@ -4,16 +4,25 @@ import firebase from 'firebase/app'
 import { db } from '../plugins/firebase.js'
 import WishButton from '@/components/WishButton.vue'
 import DoneButton from '@/components/DoneButton.vue'
+import BookItemCard from '@/components/BookItemCard.vue'
+
+interface BookItem {
+  Item: {
+    largeImageUrl: string
+    title: string
+    author: string
+  }
+}
 
 const keyword = ref('')
-const searchResults = ref(null)
+const searchResults = ref<BookItem[]>([])
 const isLoading = ref(false)
 const errorMessage = ref('')
 const baseURL = `https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?format=json&applicationId=${import.meta.env.VITE_RAKUTEN_API_APP_ID}`
 
 const queryBuilder = (query: { keyword: string }) => {
   return Object.entries(query || {})
-    .filter(([key, value]) => value !== null && value !== undefined)
+    .filter((value) => value !== null && value !== undefined)
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
     .join('&')
 }
@@ -39,7 +48,7 @@ const searchByKeyword = async (keyword: string) => {
   errorMessage.value = ''
   try {
     const data = await callSearchAPI({ keyword })
-    searchResults.value = data
+    searchResults.value = data.Items
   } catch (error) {
     errorMessage.value = 'API call failed'
   } finally {
@@ -171,5 +180,15 @@ const searchByKeyword = async (keyword: string) => {
     <v-alert v-if="errorMessage" type="error" class="my-5" dismissible>
       {{ errorMessage }}
     </v-alert>
+
+    <v-row v-if="searchResults.length > 0">
+      <v-col v-for="(item, index) in searchResults" :key="index" cols="12" md="6" lg="4">
+        <BookItemCard
+          :largeImageUrl="item.Item.largeImageUrl"
+          :title="item.Item.title"
+          :author="item.Item.author"
+        />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
