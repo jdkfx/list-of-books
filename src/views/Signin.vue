@@ -1,66 +1,37 @@
-<!-- <template>
-  <v-container>
-    <div>
-      <v-btn block color="#00acee" large rounded v-on:click="signIn()"
-        ><h3 style="color: white">ツイッターでサインイン</h3></v-btn
-      >
-    </div>
-  </v-container>
-</template>
+<script setup lang="ts">
+import type { User } from 'firebase/auth'
+import { onMounted, ref } from 'vue'
+import { getAuth, signInWithPopup, onAuthStateChanged, TwitterAuthProvider } from 'firebase/auth'
 
-<script>
-import firebase from 'firebase'
-import { db } from '../plugins/firebase'
+const currentUser = ref<User | null>(null)
 
-export default {
-  name: 'Signin',
-
-  components: {},
-
-  methods: {
-    async signIn() {
-      const provider = new firebase.auth.TwitterAuthProvider()
-      firebase
-        .auth()
-        .signInWithPopup(provider)
-        .then(
-          (result) => {
-            if (result.user) {
-              var userUid = db.collection('users').doc(`${result.user.uid}`)
-              userUid
-                .get()
-                .then(function (doc) {
-                  if (doc.exists) {
-                    console.log('Document data:', doc.data())
-                  } else {
-                    db.collection('users')
-                      .doc(`${result.user.uid}`)
-                      .set({
-                        uid: result.user.uid,
-                        name: result.user.displayName,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                      })
-                      .then(function () {
-                        console.log('Document successfully written!')
-                      })
-                      .catch(function (error) {
-                        console.log('Error writing document: ', error)
-                      })
-                  }
-                })
-                .catch(function (error) {
-                  console.log('Error getting document: ', error)
-                })
-              alert(`ようこそ、${result.user.displayName}さん！`)
-            } else {
-              alert('有効なアカウントではありません')
-            }
-          },
-          (err) => {
-            alert(err.message)
-          }
-        )
+onMounted(() => {
+  const auth = getAuth()
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser.value = user
+    } else {
+      currentUser.value = null
     }
-  }
+  })
+})
+
+const signIn = () => {
+  const provider = new TwitterAuthProvider()
+  const auth = getAuth()
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user
+    })
+    .catch((error) => {
+      const errorCode = error.code
+      const errorMessage = error.message
+    })
 }
-</script> -->
+</script>
+
+<template v-slot:append>
+  <div v-if="currentUser">{{ currentUser.displayName }} さん、ようこそ！</div>
+
+  <v-btn @click="signIn()">sign in</v-btn>
+</template>

@@ -1,9 +1,5 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import firebase from 'firebase/app'
-import { db } from '../plugins/firebase.js'
-import WishButton from '@/components/WishButton.vue'
-import DoneButton from '@/components/DoneButton.vue'
 import BookItemCard from '@/components/BookItemCard.vue'
 
 interface BookItem {
