@@ -21,9 +21,9 @@ const saveUserToFirestore = async (user: User) => {
     await setDoc(userRef, {
       uid: user.uid
     })
-    console.log('Firestoreに新しいユーザーが登録されました')
+    console.log('A new user has been registered in Firestore.')
   } else {
-    console.log('ユーザーは既にFirestoreに存在しています')
+    console.log('The user already exists in Firestore.')
   }
 }
 
