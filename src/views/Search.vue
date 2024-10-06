@@ -2,16 +2,8 @@
 import { ref } from 'vue'
 import BookItemCard from '@/components/BookItemCard.vue'
 
-interface BookItem {
-  Item: {
-    largeImageUrl: string
-    title: string
-    author: string
-  }
-}
-
 const keyword = ref('')
-const searchResults = ref<BookItem[]>([])
+const searchResults = ref([])
 const isLoading = ref(false)
 const errorMessage = ref('')
 const baseURL = `https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?format=json&applicationId=${import.meta.env.VITE_RAKUTEN_API_APP_ID}`
@@ -51,53 +43,6 @@ const searchByKeyword = async (keyword: string) => {
     isLoading.value = false
   }
 }
-
-// // 読みたい本のリストに追加
-// async clickWishButton(item) {
-//   firebase.auth().onAuthStateChanged((user) => {
-//     if (user) {
-//       let self = this
-//       let wishColRef = db.collection('users').doc(user.uid).collection('wishLists')
-//       if (user) {
-//         console.log(user.uid)
-//         this.propsTitle = item.title
-
-//         wishColRef
-//           .where('isbn', '==', item.isbn)
-//           .get()
-//           .then(function (querySnapshot) {
-//             if (querySnapshot.empty) {
-//               self.propsWishFlag = true
-//               wishColRef
-//                 .add({
-//                   imageUrl: item.largeImageUrl,
-//                   title: item.title,
-//                   author: item.author,
-//                   isbn: item.isbn,
-//                   addedAt: moment(new Date()).format('YYYY/MM/DD'),
-//                   timestamp: firebase.firestore.FieldValue.serverTimestamp()
-//                 })
-//                 .then(function (docRef) {
-//                   console.log('Document ID:', docRef.id, 'successfully written!')
-//                   wishColRef.doc(docRef.id).update({
-//                     docId: docRef.id
-//                   })
-//                 })
-//                 .catch(function (error) {
-//                   console.log('Error writing document: ', error)
-//                 })
-//             } else {
-//               self.propsWishFlag = false
-//               console.log("Document can't written!")
-//             }
-//           })
-//           .catch(function (error) {
-//             console.log('Error getting documents: ', error)
-//           })
-//       }
-//     }
-//   })
-// },
 
 // 読了した本のリストに追加
 //   async clickDoneButton(item) {
@@ -179,11 +124,7 @@ const searchByKeyword = async (keyword: string) => {
 
     <v-row v-if="searchResults.length > 0">
       <v-col v-for="(item, index) in searchResults" :key="index" cols="12" md="6" lg="4">
-        <BookItemCard
-          :largeImageUrl="item.Item.largeImageUrl"
-          :title="item.Item.title"
-          :author="item.Item.author"
-        />
+        <BookItemCard :item="item.Item" />
       </v-col>
     </v-row>
   </v-container>
