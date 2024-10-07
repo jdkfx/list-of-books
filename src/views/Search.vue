@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import type { RakutenBooksAPIResponse, RakutenBookItem } from '@/types/rakutenApi'
 import { ref } from 'vue'
 import BookItemCard from '@/components/BookItemCard.vue'
 
 const keyword = ref('')
-const searchResults = ref([])
+const searchResults = ref<RakutenBookItem[]>([])
 const isLoading = ref(false)
 const errorMessage = ref('')
 const baseURL = `https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?format=json&applicationId=${import.meta.env.VITE_RAKUTEN_API_APP_ID}`
@@ -15,7 +16,7 @@ const queryBuilder = (query: { keyword: string }) => {
     .join('&')
 }
 
-const callSearchAPI = async (query: { keyword: string }) => {
+const callSearchAPI = async (query: { keyword: string }): Promise<RakutenBooksAPIResponse> => {
   const getURL = `${baseURL}&${queryBuilder(query)}`
   console.log(getURL)
   try {
@@ -23,7 +24,7 @@ const callSearchAPI = async (query: { keyword: string }) => {
     if (!response.ok) {
       throw new Error(`API call failed with status: ${response.status}`)
     }
-    const data = await response.json()
+    const data: RakutenBooksAPIResponse = await response.json()
     return data
   } catch (error) {
     console.error('API call failed:', error)
