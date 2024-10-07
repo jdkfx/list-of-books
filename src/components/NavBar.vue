@@ -83,8 +83,8 @@ const logOut = () => {
       <div v-else class="pa-2">
         <v-list-item
           class="pa-2"
-          :prepend-avatar="currentUser?.providerData[0]?.photoURL"
-          :title="currentUser?.providerData[0]?.displayName"
+          :prepend-avatar="currentUser?.providerData[0]?.photoURL || undefined"
+          :title="currentUser?.providerData[0]?.displayName || ''"
           nav
         />
         <v-btn prepend-icon="mdi-logout" color="warning" block @click="logOut">Logout</v-btn>
