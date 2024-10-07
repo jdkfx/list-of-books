@@ -13,6 +13,7 @@ interface BookItem {
 }
 
 const doneItems = ref<BookItem[]>([])
+const isDonePage = ref(true)
 
 onMounted(() => {
   fetchDoneListItems()
@@ -51,7 +52,7 @@ const fetchDoneListItems = async () => {
   <v-container class="mt-5">
     <v-row v-if="doneItems.length > 0">
       <v-col v-for="(item, index) in doneItems" :key="index" cols="12" md="6" lg="4">
-        <BookItemCard :item="item" />
+        <BookItemCard :isDonePage :item="item" />
       </v-col>
     </v-row>
   </v-container>

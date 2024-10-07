@@ -7,6 +7,7 @@ const keyword = ref('')
 const searchResults = ref<RakutenBookItem[]>([])
 const isLoading = ref(false)
 const errorMessage = ref('')
+const isSearchPage = ref(true)
 const baseURL = `https://app.rakuten.co.jp/services/api/BooksTotal/Search/20170404?format=json&applicationId=${import.meta.env.VITE_RAKUTEN_API_APP_ID}`
 
 const queryBuilder = (query: { keyword: string }) => {
@@ -64,7 +65,7 @@ const searchByKeyword = async (keyword: string) => {
 
     <v-row v-if="searchResults.length > 0">
       <v-col v-for="(item, index) in searchResults" :key="index" cols="12" md="6" lg="4">
-        <BookItemCard :item="item.Item" />
+        <BookItemCard :isSearchPage :item="item.Item" />
       </v-col>
     </v-row>
   </v-container>

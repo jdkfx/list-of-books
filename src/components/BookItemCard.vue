@@ -12,6 +12,9 @@ interface BookItem {
 
 const props = defineProps<{
   item: BookItem
+  isSearchPage?: boolean
+  isWishPage?: boolean
+  isDonePage?: boolean
 }>()
 </script>
 
@@ -24,9 +27,16 @@ const props = defineProps<{
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <WishButton :item="props.item" />
-        <DoneButton :item="props.item" />
-        <DeleteButton :item="props.item" />
+        <template v-if="props.isSearchPage">
+          <WishButton :item="props.item" />
+          <DoneButton :item="props.item" />
+        </template>
+
+        <!-- DoneButton と DeleteButton を条件で表示 -->
+        <template v-else-if="props.isWishPage || props.isDonePage">
+          <DoneButton v-if="props.isWishPage" :item="props.item" />
+          <DeleteButton :item="props.item" />
+        </template>
       </v-card-actions>
     </v-card>
   </v-container>

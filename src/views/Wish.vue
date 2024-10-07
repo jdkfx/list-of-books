@@ -13,6 +13,7 @@ interface BookItem {
 }
 
 const wishItems = ref<BookItem[]>([])
+const isWishPage = ref(true)
 
 onMounted(() => {
   fetchWishListItems()
@@ -57,7 +58,7 @@ const fetchWishListItems = async () => {
   <v-container class="mt-5">
     <v-row v-if="wishItems.length > 0">
       <v-col v-for="(item, index) in wishItems" :key="index" cols="12" md="6" lg="4">
-        <BookItemCard :item="item" />
+        <BookItemCard :isWishPage :item="item" />
       </v-col>
     </v-row>
   </v-container>
