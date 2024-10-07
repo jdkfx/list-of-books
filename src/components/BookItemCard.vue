@@ -32,7 +32,6 @@ const props = defineProps<{
           <DoneButton :item="props.item" />
         </template>
 
-        <!-- DoneButton と DeleteButton を条件で表示 -->
         <template v-else-if="props.isWishPage || props.isDonePage">
           <DoneButton v-if="props.isWishPage" :item="props.item" />
           <DeleteButton :item="props.item" />

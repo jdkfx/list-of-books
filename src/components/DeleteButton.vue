@@ -23,6 +23,8 @@ const clickDeleteButton = async () => {
         const q = query(wishColRef, where('isbn', '==', props.item.isbn))
         const querySnapshot = await getDocs(q)
 
+        // TODO: doneColRefに対して削除する処理を追加
+
         const deletePromises = querySnapshot.docs.map(async (doc) => {
           await deleteDoc(doc.ref)
           console.log('Document successfully deleted:', doc.id)

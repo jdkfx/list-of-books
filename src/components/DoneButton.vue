@@ -19,12 +19,14 @@ const clickDoneButton = async () => {
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       try {
-        const wishColRef = collection(db, 'users', user.uid, 'doneLists')
-        const q = query(wishColRef, where('isbn', '==', props.item.isbn))
+        const doneColRef = collection(db, 'users', user.uid, 'doneLists')
+        const q = query(doneColRef, where('isbn', '==', props.item.isbn))
         const querySnapshot = await getDocs(q)
 
+        // TODO: doneListsに追加したwishListsのアイテムを削除する処理を追加
+
         if (querySnapshot.empty) {
-          await setDoc(doc(wishColRef), {
+          await setDoc(doc(doneColRef), {
             imageUrl: props.item.largeImageUrl,
             title: props.item.title,
             author: props.item.author,
