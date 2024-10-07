@@ -29,12 +29,11 @@ const clickWishButton = async () => {
             title: props.item.title,
             author: props.item.author,
             isbn: props.item.isbn,
-            addedAt: new Date().toISOString(),
             timestamp: serverTimestamp()
           })
-          console.log('Document successfully written!')
+          console.log('Document successfully written to the wishlist!')
         } else {
-          console.log("Document already exists, can't be written!")
+          console.log("Document already exists in the wishlist, can't be written!")
         }
       } catch (error) {
         console.error('Error getting documents: ', error)
@@ -60,12 +59,11 @@ const clickDoneButton = async () => {
             title: props.item.title,
             author: props.item.author,
             isbn: props.item.isbn,
-            addedAt: new Date().toISOString(),
             timestamp: serverTimestamp()
           })
-          console.log('Document successfully written!')
+          console.log('Document successfully written to the donelist!')
         } else {
-          console.log("Document already exists, can't be written!")
+          console.log("Document already exists in the donelist, can't be written!")
         }
       } catch (error) {
         console.error('Error getting documents: ', error)
