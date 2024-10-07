@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import db from '@/plugins/firebase'
-import { doc, setDoc, collection, query, where, getDocs, serverTimestamp } from 'firebase/firestore'
+import WishButton from '@/components/WishButton.vue'
+import DoneButton from '@/components/DoneButton.vue'
+import DeleteButton from '@/components/DeleteButton.vue'
 
 interface BookItem {
   largeImageUrl: string
@@ -13,66 +13,6 @@ interface BookItem {
 const props = defineProps<{
   item: BookItem
 }>()
-
-const clickWishButton = async () => {
-  const auth = getAuth()
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-        const wishColRef = collection(db, 'users', user.uid, 'wishLists')
-        const q = query(wishColRef, where('isbn', '==', props.item.isbn))
-        const querySnapshot = await getDocs(q)
-
-        if (querySnapshot.empty) {
-          await setDoc(doc(wishColRef), {
-            imageUrl: props.item.largeImageUrl,
-            title: props.item.title,
-            author: props.item.author,
-            isbn: props.item.isbn,
-            timestamp: serverTimestamp()
-          })
-          console.log('Document successfully written to the wishlist!')
-        } else {
-          console.log("Document already exists in the wishlist, can't be written!")
-        }
-      } catch (error) {
-        console.error('Error getting documents: ', error)
-      }
-    } else {
-      console.log('User is not logged in')
-    }
-  })
-}
-
-const clickDoneButton = async () => {
-  const auth = getAuth()
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      try {
-        const wishColRef = collection(db, 'users', user.uid, 'doneLists')
-        const q = query(wishColRef, where('isbn', '==', props.item.isbn))
-        const querySnapshot = await getDocs(q)
-
-        if (querySnapshot.empty) {
-          await setDoc(doc(wishColRef), {
-            imageUrl: props.item.largeImageUrl,
-            title: props.item.title,
-            author: props.item.author,
-            isbn: props.item.isbn,
-            timestamp: serverTimestamp()
-          })
-          console.log('Document successfully written to the donelist!')
-        } else {
-          console.log("Document already exists in the donelist, can't be written!")
-        }
-      } catch (error) {
-        console.error('Error getting documents: ', error)
-      }
-    } else {
-      console.log('User is not logged in')
-    }
-  })
-}
 </script>
 
 <template>
@@ -84,19 +24,9 @@ const clickDoneButton = async () => {
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn prepend-icon="mdi-heart" @click="clickWishButton">
-          <template v-slot:prepend>
-            <v-icon color="pink-accent-1"></v-icon>
-          </template>
-          読みたい
-        </v-btn>
-
-        <v-btn prepend-icon="mdi-check-bold" @click="clickDoneButton">
-          <template v-slot:prepend>
-            <v-icon color="green-accent-3"></v-icon>
-          </template>
-          読んだ
-        </v-btn>
+        <WishButton :item="props.item" />
+        <DoneButton :item="props.item" />
+        <DeleteButton :item="props.item" />
       </v-card-actions>
     </v-card>
   </v-container>
