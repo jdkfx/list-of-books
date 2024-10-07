@@ -32,8 +32,8 @@ const fetchWishListItems = async () => {
         } else {
           // バージョンアップに伴い、doneFlagがtrueになっているDocumentを削除する
           const deletePromises = querySnapshot.docs
-            .filter(doc => doc.data().doneFlag === true)
-            .map(doc => deleteDoc(doc.ref))
+            .filter((doc) => doc.data().doneFlag === true)
+            .map((doc) => deleteDoc(doc.ref))
           await Promise.all(deletePromises)
 
           wishItems.value = querySnapshot.docs.map((doc) => ({

@@ -26,7 +26,7 @@ const router = createRouter({
       path: '/done',
       name: 'done',
       component: Done
-    },
+    }
   ]
 })
 
