@@ -43,67 +43,6 @@ const searchByKeyword = async (keyword: string) => {
     isLoading.value = false
   }
 }
-
-// 読了した本のリストに追加
-//   async clickDoneButton(item) {
-//     firebase.auth().onAuthStateChanged((user) => {
-//       if (user) {
-//         let self = this
-//         let doneColRef = db.collection('users').doc(user.uid).collection('doneLists')
-//         let wishColRef = db.collection('users').doc(user.uid).collection('wishLists')
-//         if (user) {
-//           console.log(user.uid)
-//           this.propsTitle = item.title
-
-//           doneColRef
-//             .where('isbn', '==', item.isbn)
-//             .get()
-//             .then(function (querySnapshot) {
-//               if (querySnapshot.empty) {
-//                 self.propsDoneFlag = true
-//                 doneColRef
-//                   .add({
-//                     imageUrl: item.largeImageUrl,
-//                     title: item.title,
-//                     author: item.author,
-//                     isbn: item.isbn,
-//                     addedAt: moment(new Date()).format('YYYY/MM/DD'),
-//                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
-//                   })
-//                   .then(function (docRef) {
-//                     console.log('Document ID:', docRef.id, 'successfully written!')
-//                     doneColRef.doc(docRef.id).update({
-//                       docId: docRef.id
-//                     })
-
-//                     wishColRef
-//                       .where('isbn', '==', item.isbn)
-//                       .get()
-//                       .then((snapshot) => {
-//                         snapshot.forEach((doc) => {
-//                           wishColRef.doc(doc.id).update({
-//                             doneFlag: true
-//                           })
-//                           console.log('The wishlist(ID:', doc.id, ') update is completed')
-//                         })
-//                       })
-//                   })
-//                   .catch(function (error) {
-//                     console.log('Error writing document: ', error)
-//                   })
-//               } else {
-//                 self.propsDoneFlag = false
-//                 console.log("Document can't written!")
-//               }
-//             })
-//             .catch(function (error) {
-//               console.log('Error getting documents: ', error)
-//             })
-//         }
-//       }
-//     })
-//   }
-// }
 </script>
 
 <template>

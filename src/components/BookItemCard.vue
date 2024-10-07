@@ -44,6 +44,37 @@ const clickWishButton = async () => {
     }
   })
 }
+
+const clickDoneButton = async () => {
+  const auth = getAuth()
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      try {
+        const wishColRef = collection(db, 'users', user.uid, 'doneLists')
+        const q = query(wishColRef, where('isbn', '==', props.item.isbn))
+        const querySnapshot = await getDocs(q)
+
+        if (querySnapshot.empty) {
+          await setDoc(doc(wishColRef), {
+            imageUrl: props.item.largeImageUrl,
+            title: props.item.title,
+            author: props.item.author,
+            isbn: props.item.isbn,
+            addedAt: new Date().toISOString(),
+            timestamp: serverTimestamp()
+          })
+          console.log('Document successfully written!')
+        } else {
+          console.log("Document already exists, can't be written!")
+        }
+      } catch (error) {
+        console.error('Error getting documents: ', error)
+      }
+    } else {
+      console.log('User is not logged in')
+    }
+  })
+}
 </script>
 
 <template>
@@ -62,7 +93,7 @@ const clickWishButton = async () => {
           読みたい
         </v-btn>
 
-        <v-btn prepend-icon="mdi-check-bold">
+        <v-btn prepend-icon="mdi-check-bold" @click="clickDoneButton">
           <template v-slot:prepend>
             <v-icon color="green-accent-3"></v-icon>
           </template>
